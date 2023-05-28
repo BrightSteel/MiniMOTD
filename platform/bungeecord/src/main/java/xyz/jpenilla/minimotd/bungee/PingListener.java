@@ -25,6 +25,7 @@ package xyz.jpenilla.minimotd.bungee;
 
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.Favicon;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -36,6 +37,9 @@ import xyz.jpenilla.minimotd.common.Constants;
 import xyz.jpenilla.minimotd.common.MiniMOTD;
 import xyz.jpenilla.minimotd.common.PingResponse;
 import xyz.jpenilla.minimotd.common.config.MiniMOTDConfig;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class PingListener implements Listener {
   private final MiniMOTD<Favicon> miniMOTD;
@@ -61,6 +65,10 @@ public final class PingListener implements Listener {
       mini.playerCount().applyCount(players::setOnline, players::setMax);
       if (mini.disablePlayerListHover()) {
         players.setSample(new ServerPing.PlayerInfo[]{});
+      }
+      else {
+        List<ServerPing.PlayerInfo> playerInfoList = ProxyServer.getInstance().getPlayers().stream().map(proxiedPlayer -> new ServerPing.PlayerInfo(proxiedPlayer.getName(), proxiedPlayer.getUniqueId())).collect(Collectors.toList());
+        players.setSample(playerInfoList.toArray(new ServerPing.PlayerInfo[0]));
       }
     }
 
